@@ -1,5 +1,6 @@
 #region Include Definition
 using System;
+using System.Threading.Tasks;
 #endregion
 
 namespace ProductService.Repository.IService
@@ -8,7 +9,7 @@ namespace ProductService.Repository.IService
     public interface IBaseService : IDisposable
     {
         #region Method Signature
-        void SaveChanges();
+        Task<int> SaveChanges();
         #endregion
     }
     #endregion

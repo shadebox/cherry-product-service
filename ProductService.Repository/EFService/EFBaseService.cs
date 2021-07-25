@@ -1,8 +1,8 @@
 #region Include Definition
 using ProductService.Repository.IService;
 using ProductService.Database.DBContext;
-using System;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 #endregion
 
 namespace ProductService.Repository.EFService
@@ -33,11 +33,13 @@ namespace ProductService.Repository.EFService
                 _context.Dispose();
         }
 
-        public async void SaveChanges()
+        public async Task<int> SaveChanges()
         {
+            int entitiesUpdated = 0;
+
             try
             {
-                await _context.SaveChangesAsync();
+                entitiesUpdated = await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -47,14 +49,8 @@ namespace ProductService.Repository.EFService
             {
                 throw;
             }
-            catch (ObjectDisposedException)
-            {
-                throw;
-            }
-            catch(InvalidOperationException)
-            {
-                throw;
-            }
+
+            return entitiesUpdated;
         }
         #endregion
     }
