@@ -13,7 +13,7 @@ namespace ProductService.Database.DBContext
     public sealed class EFContext : DbContext
     {
         #region Private Field Definition
-        private readonly string defaultEnvironment;
+        private readonly string _defaultEnvironment;
         #endregion
 
         #region Public Property Definition
@@ -30,7 +30,7 @@ namespace ProductService.Database.DBContext
             Database.AutoTransactionsEnabled = false;
 
             // Get the environment this application is running on
-            defaultEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+            _defaultEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 
             Configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -41,7 +41,7 @@ namespace ProductService.Database.DBContext
         public EFContext(DbContextOptions<EFContext> options) : base(options)
         {
             // Get the environment this application is running on
-            defaultEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+            _defaultEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
             
             Configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -56,7 +56,7 @@ namespace ProductService.Database.DBContext
             // Setting database connection string
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(Configuration.GetConnectionString(defaultEnvironment), 
+                optionsBuilder.UseSqlServer(Configuration.GetConnectionString(_defaultEnvironment), 
                     providerOptions => providerOptions.EnableRetryOnFailure(3, TimeSpan.FromSeconds(5), null)).EnableDetailedErrors(true);
             }
         }

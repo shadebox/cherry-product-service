@@ -1,9 +1,11 @@
 #region Include Definition
 using System.Data;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Dapper;
 #endregion
 
@@ -13,13 +15,23 @@ namespace ProductService.Database.DBContext
     public sealed class DapperContext : IDatabaseContext
     {
         #region Private Field Definition
-        private readonly string connectionString;
+        private readonly string _defaultEnvironment;
+        #endregion
+
+        #region Public Property Definition
+        public IConfiguration Configuration { get; set; }
         #endregion
 
         #region Public Constructor Definition
-        public DapperContext(string connectionString)
+        public DapperContext()
         {
-            this.connectionString = connectionString;
+            // Get the environment this application is running on
+            _defaultEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+            
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddUserSecrets<EFContext>()
+                .Build();
         }
         #endregion
 
@@ -29,7 +41,7 @@ namespace ProductService.Database.DBContext
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
-            using IDbConnection conn = new SqlConnection(connectionString);
+            using IDbConnection conn = new SqlConnection(Configuration.GetConnectionString(_defaultEnvironment));
             IEnumerable<TResult> result = conn.Query<TResult>(sql, parameters, commandType: commandType);
 
             timer.Stop();

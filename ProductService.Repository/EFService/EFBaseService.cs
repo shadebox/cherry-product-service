@@ -35,11 +35,11 @@ namespace ProductService.Repository.EFService
 
         public async Task<int> SaveChanges()
         {
-            int entitiesUpdated = 0;
+            int updatedEntities = 0;
 
             try
             {
-                entitiesUpdated = await _context.SaveChangesAsync();
+                updatedEntities = await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -50,7 +50,7 @@ namespace ProductService.Repository.EFService
                 throw;
             }
 
-            return entitiesUpdated;
+            return updatedEntities;
         }
         #endregion
     }
