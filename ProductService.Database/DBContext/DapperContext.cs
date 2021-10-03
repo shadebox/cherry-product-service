@@ -1,13 +1,11 @@
 #region Include Definition
 using System.Data;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Data.SqlClient;
-<<<<<<< HEAD
 using Microsoft.Extensions.Configuration;
-=======
->>>>>>> develop
 using Dapper;
 #endregion
 

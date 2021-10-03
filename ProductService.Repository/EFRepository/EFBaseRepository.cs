@@ -50,7 +50,7 @@ namespace ProductService.Repository.EFRepository
         #region Prviate Method Definition
         private void SetEntityStateModified(TEntity entity, EntityState entityState)
         {
-            context.Entry(entity).State = entityState;
+            _context.Entry(entity).State = entityState;
         }
         #endregion
     }
