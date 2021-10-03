@@ -14,7 +14,7 @@ namespace ProductService.Database.DBContext
     public sealed class DapperContext : IDatabaseContext
     {
         #region Private Field Definition
-        private readonly string defaultEnvironment;
+        private readonly string _defaultEnvironment;
         #endregion
 
         #region Public Property Definition
@@ -22,10 +22,10 @@ namespace ProductService.Database.DBContext
         #endregion
 
         #region Public Constructor Definition
-        public DapperContext(string connectionString)
+        public DapperContext()
         {
             // Get the environment this application is running on
-            defaultEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+            _defaultEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
             
             Configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -40,7 +40,7 @@ namespace ProductService.Database.DBContext
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
-            using IDbConnection conn = new SqlConnection(Configuration.GetConnectionString(defaultEnvironment));
+            using IDbConnection conn = new SqlConnection(Configuration.GetConnectionString(_defaultEnvironment));
             IEnumerable<TResult> result = conn.Query<TResult>(sql, parameters, commandType: commandType);
 
             timer.Stop();

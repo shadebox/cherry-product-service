@@ -12,13 +12,13 @@ namespace ProductService.Repository.EFRepository
     public class EFBaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
     {
         #region Protected Field
-        protected EFContext context;
+        protected EFContext _context;
         #endregion
 
         #region Public Constructor Definition
         public EFBaseRepository(EFContext context)
         {
-            this.context = context;
+            _context = context;
         }
         #endregion
 
@@ -26,14 +26,14 @@ namespace ProductService.Repository.EFRepository
         public virtual TEntity Insert(TEntity entity)
         {
             // Add Client to dbContext
-            context.Set<TEntity>().Add(entity);
+            _context.Set<TEntity>().Add(entity);
             return entity;
         }
 
         public virtual TEntity Save(TEntity entity)
         {
             // Attach entity to dbContext && Set status as modified
-            context.Set<TEntity>().Attach(entity);
+            _context.Set<TEntity>().Attach(entity);
             SetEntityStateModified(entity, EntityState.Modified);
             return entity;
         }
@@ -41,7 +41,7 @@ namespace ProductService.Repository.EFRepository
         public virtual TEntity Delete(TEntity entity)
         {
             // Attach entity to dbcontext && Set status as modified, Never delete entity
-            context.Set<TEntity>().Attach(entity);
+            _context.Set<TEntity>().Attach(entity);
             SetEntityStateModified(entity, EntityState.Modified);// EntityState.Deleted; 
             return entity;
         }
