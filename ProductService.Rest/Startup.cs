@@ -15,7 +15,11 @@ namespace ProductService.Rest
 {
     #region Public Class Definition
     public class Startup
-    {        
+    {
+        #region Private Field Definition
+        private readonly string _policyName = "CorsPolicy";
+        #endregion
+
         #region Public Property Definition
         public IConfiguration Configuration { get; set; }
         #endregion
@@ -32,6 +36,17 @@ namespace ProductService.Rest
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy(name: _policyName, builder =>
+                {
+                    builder
+                        //.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
@@ -45,6 +60,9 @@ namespace ProductService.Rest
             }
 
             app.UseRouting();
+
+            // Use at controller or action level instead [EnableCors(_policyName)]
+            //app.UseCors(_policyName);
 
             app.UseEndpoints(endpoints =>
             {
