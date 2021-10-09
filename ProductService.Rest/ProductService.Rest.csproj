@@ -5,11 +5,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ProductService.Repository\ProductService.Repository.csproj" />
+    <ProjectReference Include="..\ProductService.BusinessLogic\ProductService.BusinessLogic.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>163a88cb-54c0-4db5-a8f5-44387a7b5ed3</UserSecretsId>
   </PropertyGroup>
 
 </Project>

@@ -13,7 +13,7 @@ namespace ProductService.Database.EFConfiguration
         public override void Configure(EntityTypeBuilder<TEntity> builder)
         {
             // Set table types in database
-            builder.Property(p => p.ModifiedDate).HasColumnType("Datetime2").HasDefaultValueSql("GEtDate()");
+            builder.Property(p => p.ModifiedDate).HasColumnType("Datetime2").HasDefaultValueSql("GetDate()");
             
             base.Configure(builder);
         }

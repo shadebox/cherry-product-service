@@ -9,6 +9,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProductService.Repository.IRepository;
+using ProductService.Repository.EFRepository;
+using ProductService.BusinessLogic.Service;
+using ProductService.Database.DBContext;
+using Microsoft.EntityFrameworkCore;
 #endregion
 
 namespace ProductService.Rest
@@ -17,7 +22,8 @@ namespace ProductService.Rest
     public class Startup
     {
         #region Private Field Definition
-        private readonly string _policyName = "CorsPolicy";
+        private readonly string _policyName;
+        private readonly string _defaultEnvironment;
         #endregion
 
         #region Public Property Definition
@@ -27,6 +33,9 @@ namespace ProductService.Rest
         #region Public Constructor Definition
         public Startup(IConfiguration configuration)
         {
+            _policyName = "CorsPolicy";
+            _defaultEnvironment = "Development";
+
             Configuration = configuration;
         }
         #endregion
@@ -36,6 +45,8 @@ namespace ProductService.Rest
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? _defaultEnvironment;
+
             services.AddCors(opt =>
             {
                 opt.AddPolicy(name: _policyName, builder =>
@@ -47,8 +58,13 @@ namespace ProductService.Rest
                 });
             });
 
-            services.AddControllers();
+            services.AddDbContext<EFContext>(options => options.UseSqlServer(Configuration.GetConnectionString(environment)));
+
+            services.AddScoped<IProductRepository, EFProductRepository>();
+            services.AddScoped<IProductService, BusinessLogic.Service.ProductService>();
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,7 +72,19 @@ namespace ProductService.Rest
         {
             if (env.IsDevelopment())
             {
+                // Display detailed errors for development
                 app.UseDeveloperExceptionPage();
+
+                //Displays 404 error message
+                app.UseStatusCodePages();
+            }
+            else
+            {
+                // HTTP Strict Transport Security
+                app.UseHsts();
+
+                // HTTP redirection to HTTPS
+                app.UseHttpsRedirection();
             }
 
             app.UseRouting();

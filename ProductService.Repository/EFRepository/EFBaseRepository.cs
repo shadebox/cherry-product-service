@@ -3,13 +3,17 @@ using ProductService.Database.DBContext;
 using ProductService.Database.Domain;
 using ProductService.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using System;
+using System.Linq;
+using LinqKit;
+using System.Threading.Tasks;
 #endregion
 
 namespace ProductService.Repository.EFRepository
 {
     #region Public Class Definition
-    public class EFBaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
+    public abstract class EFBaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
     {
         #region Protected Field
         protected EFContext _context;
@@ -23,14 +27,37 @@ namespace ProductService.Repository.EFRepository
         #endregion
 
         #region Public Method Definition
-        public virtual TEntity Insert(TEntity entity)
+        public async Task<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> whereCondition)
+        {
+            try
+            {
+                IQueryable<TEntity> entity;
+
+                entity = _context.Set<TEntity>().AsNoTracking();
+
+                if (whereCondition != null)
+                    return await entity.AsExpandable().Where(whereCondition).FirstOrDefaultAsync();
+                else
+                    return await entity.FirstOrDefaultAsync();
+            }
+            catch(ArgumentNullException)
+            {
+                throw;
+            }
+            catch(InvalidOperationException)
+            {
+                throw;
+            }
+        }
+
+        public TEntity Insert(TEntity entity)
         {
             // Add Client to dbContext
             _context.Set<TEntity>().Add(entity);
             return entity;
         }
 
-        public virtual TEntity Save(TEntity entity)
+        public TEntity Save(TEntity entity)
         {
             // Attach entity to dbContext && Set status as modified
             _context.Set<TEntity>().Attach(entity);
@@ -38,7 +65,7 @@ namespace ProductService.Repository.EFRepository
             return entity;
         }
 
-        public virtual TEntity Delete(TEntity entity)
+        public TEntity Delete(TEntity entity)
         {
             // Attach entity to dbcontext && Set status as modified, Never delete entity
             _context.Set<TEntity>().Attach(entity);
