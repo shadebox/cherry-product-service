@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ProductService.Database\ProductService.Database.csproj" />
+    <ProjectReference Include="..\ProductService.Repository\ProductService.Repository.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -10,6 +10,8 @@ namespace ProductService.BusinessLogic.Service
     public interface IProductService
     {
         #region Method Signature
+        Task<Product> GetProductAsync(int ProductId);
+
         Task<IList<Product>> GetProductsAsync();
         #endregion
     }

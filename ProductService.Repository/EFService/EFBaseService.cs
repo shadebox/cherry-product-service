@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ProductService.Repository.EFService
 {
     #region Public Class Definition
-    public class EFBaseService : IBaseService
+    public sealed class EFBaseService : IBaseService
     {        
         #region Private Field Definition
         private EFContext _context;

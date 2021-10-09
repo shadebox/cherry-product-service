@@ -25,9 +25,10 @@ namespace ProductService.Rest.Controllers
 
         #region Public Method Definition
         [HttpGet]
-        public async Task<IEnumerable<string>> GetProductsAsync()
+        public async Task<string> GetProductAsync()
         {
-            throw new NotImplementedException();
+            var p = await _productService.GetProductAsync(1);
+            return p?.Name;
         }
         #endregion
     }
