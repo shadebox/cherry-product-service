@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using ProductService.BusinessLogic.Service;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System;
 using AutoMapper;
 using ProductService.Rest.Models.Resources;
+using ProductService.Rest.Models.Bindings;
 using ProductService.Database.Domain;
+using ProductService.Rest.Extensions;
 #endregion
 
 namespace ProductService.Rest.Controllers
@@ -29,12 +29,26 @@ namespace ProductService.Rest.Controllers
         #endregion
 
         #region Public Method Definition
-        [HttpGet]
-        public async Task<ProductResource> GetProductAsync()
+        [HttpGet("{productID}")]
+        public async Task<IActionResult> GetProductAsync(long productID)
         {
-            var product = await _productService.GetProductAsync(1);
+            Product product = await _productService.GetProductAsync(productID);
             
-            return _mapper.Map<Product, ProductResource>(product);
+            if (product == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<Product, ProductResource>(product));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostAsync([FromBody] SaveProductBinding productBinding)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            Product product = _mapper.Map<SaveProductBinding, Product>(productBinding);
+
+            throw new System.NotImplementedException();
         }
         #endregion
     }

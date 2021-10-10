@@ -1,7 +1,7 @@
 #region Include Definition
-using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 #endregion
 
@@ -13,6 +13,8 @@ namespace ProductService.Repository.IRepository
         #region Method Signature
         Task<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> whereCondition);
         
+        Task<IList<TEntity>> GetManyAsync(Expression<Func<TEntity, bool>> whereCondition, int page = 1, int pageSize = 1);
+
         TEntity Insert(TEntity entity);
 
         TEntity Save(TEntity entity);
