@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ProductService.Database.Domain;
+using ProductService.BusinessLogic.Dtos;
 #endregion
 
-namespace ProductService.BusinessLogic.Service
+namespace ProductService.BusinessLogic.Services
 {
     #region Public Interface Definition
     public interface IProductService
     {
         #region Method Signature
-        Task<Product> GetProductAsync(long productID);
+        Task<ProductDto> GetProductAsync(long productID);
 
-        Task<IList<Product>> GetProductsAsync(int page, int pageSize);
+        // Task<IList<ProductDto>> GetProductsAsync(int page, int pageSize);
+
+        Task<ProductDto> CreateProductAsync(ProductDto productDto);
         #endregion
     }
     #endregion

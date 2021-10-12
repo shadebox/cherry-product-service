@@ -77,10 +77,10 @@ namespace ProductService.Repository.EFRepository
             }
         }
 
-        public TEntity Insert(TEntity entity)
+        public async Task<TEntity> InsertAsync(TEntity entity)
         {
             // Add Client to dbContext
-            _context.Set<TEntity>().Add(entity);
+            await _context.Set<TEntity>().AddAsync(entity);
             return entity;
         }
 

@@ -22,18 +22,13 @@ namespace ProductService.Repository.EFService
         #endregion
 
         #region Public Method Definition
-        public EFContext GetContext()
-        {
-            return _context;
-        }
-
         public void Dispose()
         {
             if (_context != null)
                 _context.Dispose();
         }
 
-        public async Task<int> SaveChanges()
+        public async Task<int> SaveChangesAsync()
         {
             int updatedEntities = 0;
 

@@ -9,7 +9,7 @@ namespace ProductService.Repository.IService
     public interface IBaseService : IDisposable
     {
         #region Method Signature
-        Task<int> SaveChanges();
+        Task<int> SaveChangesAsync();
         #endregion
     }
     #endregion

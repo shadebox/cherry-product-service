@@ -15,7 +15,7 @@ namespace ProductService.Repository.IRepository
         
         Task<IList<TEntity>> GetManyAsync(Expression<Func<TEntity, bool>> whereCondition, int page = 1, int pageSize = 1);
 
-        TEntity Insert(TEntity entity);
+        Task<TEntity> InsertAsync(TEntity entity);
 
         TEntity Save(TEntity entity);
 
