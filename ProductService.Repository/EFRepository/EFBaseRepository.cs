@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using LinqKit;
 using System.Threading.Tasks;
 #endregion
@@ -36,9 +37,9 @@ namespace ProductService.Repository.EFRepository
                 entity = _context.Set<TEntity>().AsNoTracking();
 
                 if (whereCondition != null)
-                    return await entity.AsExpandable().Where(whereCondition).FirstOrDefaultAsync();
+                    return await entity.AsExpandable().Where(whereCondition).SingleOrDefaultAsync();
                 else
-                    return await entity.FirstOrDefaultAsync();
+                    return await entity.SingleOrDefaultAsync();
             }
             catch(ArgumentNullException)
             {
@@ -50,10 +51,36 @@ namespace ProductService.Repository.EFRepository
             }
         }
 
-        public TEntity Insert(TEntity entity)
+        public async Task<IList<TEntity>> GetManyAsync(Expression<Func<TEntity, bool>> whereCondition, int page = 1, int pageSize = 1)
+        {
+            try
+            {
+                int pageStart = (page - 1) * pageSize;
+                IQueryable<TEntity> entity;
+
+                entity = _context.Set<TEntity>().AsNoTracking();
+
+                if (whereCondition != null)
+                    entity = entity.AsExpandable().Where(whereCondition).OrderBy(p => p.ID);
+                else
+                    entity = entity.OrderBy(p => p.ID);
+                
+                if (page == 0 && pageSize == 0)
+                    return await entity.ToListAsync();
+                else
+                    return await entity.Skip(pageStart).Take(pageSize).ToListAsync();
+
+            }
+            catch(ArgumentNullException)
+            {
+                throw;
+            }
+        }
+
+        public async Task<TEntity> InsertAsync(TEntity entity)
         {
             // Add Client to dbContext
-            _context.Set<TEntity>().Add(entity);
+            await _context.Set<TEntity>().AddAsync(entity);
             return entity;
         }
 

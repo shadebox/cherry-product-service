@@ -1,17 +1,16 @@
 #region Include Definition
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProductService.Repository.IRepository;
 using ProductService.Repository.EFRepository;
-using ProductService.BusinessLogic.Service;
+using ProductService.Repository.IService;
+using ProductService.Repository.EFService;
+using ProductService.BusinessLogic.Services;
+using ProductService.BusinessLogic.WhereExpression;
 using ProductService.Database.DBContext;
 using Microsoft.EntityFrameworkCore;
 #endregion
@@ -60,8 +59,11 @@ namespace ProductService.Rest
 
             services.AddDbContext<EFContext>(options => options.UseSqlServer(Configuration.GetConnectionString(environment)));
 
+            services.AddScoped<IBaseService, EFBaseService>();
             services.AddScoped<IProductRepository, EFProductRepository>();
-            services.AddScoped<IProductService, BusinessLogic.Service.ProductService>();
+            services.AddScoped<IProductService, BusinessLogic.Services.ProductService>();
+            
+            services.AddScoped<ProductExpression>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddControllers();

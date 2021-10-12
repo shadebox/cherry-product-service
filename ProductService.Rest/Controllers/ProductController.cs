@@ -1,12 +1,11 @@
 #region Include Definition
 using Microsoft.AspNetCore.Mvc;
-using ProductService.BusinessLogic.Service;
+using ProductService.BusinessLogic.Services;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System;
 using AutoMapper;
 using ProductService.Rest.Models.Resources;
-using ProductService.Database.Domain;
+using ProductService.BusinessLogic.Dtos;
+using ProductService.Rest.Extensions;
 #endregion
 
 namespace ProductService.Rest.Controllers
@@ -29,12 +28,34 @@ namespace ProductService.Rest.Controllers
         #endregion
 
         #region Public Method Definition
-        [HttpGet]
-        public async Task<ProductResource> GetProductAsync()
+        [HttpGet("{productID}")]
+        public async Task<IActionResult> GetProductAsync(long productID)
         {
-            var product = await _productService.GetProductAsync(1);
+            ProductDto productDto = await _productService.GetProductAsync(productID);
             
-            return _mapper.Map<Product, ProductResource>(product);
+            if (productDto == null)
+                return NotFound();
+
+            return Ok(new DataResponse<ProductResource>(_mapper.Map<ProductDto, ProductResource>(productDto)));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostAsync([FromBody] ProductResource productResource)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ErrorResponse(ModelState.GetErrorMessages()));
+
+            ProductDto productDto = await _productService
+                .CreateProductAsync(_mapper.Map<ProductResource, ProductDto>(productResource));
+
+            // TODO: Change this to CreatedAt method
+            return Ok(_mapper.Map<ProductDto, ProductResource>(productDto));
+        }
+
+        [HttpPut("{}")]
+        public async Task<IActionResult> PutAsync([FromBody] ProductResource productResource)
+        {
+            throw new System.NotImplementedException();
         }
         #endregion
     }
