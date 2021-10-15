@@ -15,9 +15,16 @@ Manage and serve product and product related data
 ### Running the project
 
 To run the project from a CLI:
--   Open terminal and ```cd``` to the <project> directory
+-   Open terminal and ```cd``` to the ProductService.Rest directory
 -   Run ```dotnet restore```
 -   Run ```dotnet run```
+
+To call api:
+-   Get Api: curl -X GET https://localhost:5001/product/1 -H 'Content-Type: application/json' -k
+-   Get All Api: curl -X GET https://localhost:5001/product -H 'Content-Type: application/json' -k
+-   Post Api: curl -X POST https://localhost:5001/product -H 'Content-Type: application/json' -d '' -k
+-   Put Api: curl -X PUT https://localhost:5001/product/1 -H 'Content-Type: application/json' -d '' -k
+-   Delete Api: curl -X DELETE https://localhost:5001/product/1 -H 'Content-Type: application/json' -k
 
 ## Deployment
 
