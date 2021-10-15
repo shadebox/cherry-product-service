@@ -65,7 +65,8 @@ namespace ProductService.Rest
             
             services.AddScoped<ProductExpression>();
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            // services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
         }
 

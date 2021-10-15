@@ -94,6 +94,9 @@ namespace ProductService.Repository.EFRepository
 
         public TEntity Delete(TEntity entity)
         {
+            // Set status to delete
+            entity.Status = 2;
+
             // Attach entity to dbcontext && Set status as modified, Never delete entity
             _context.Set<TEntity>().Attach(entity);
             SetEntityStateModified(entity, EntityState.Modified);// EntityState.Deleted; 

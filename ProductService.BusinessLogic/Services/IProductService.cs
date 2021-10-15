@@ -11,11 +11,15 @@ namespace ProductService.BusinessLogic.Services
     public interface IProductService
     {
         #region Method Signature
+        Task<IList<ProductDto>> GetProductsAsync(int page, int pageSize);
+
         Task<ProductDto> GetProductAsync(long productID);
 
-        // Task<IList<ProductDto>> GetProductsAsync(int page, int pageSize);
-
         Task<ProductDto> CreateProductAsync(ProductDto productDto);
+
+        Task<ProductDto> UpdateProductAsync(long id, ProductDto productDto);
+
+        Task DeleteProductAsync(ProductDto productDto);
         #endregion
     }
     #endregion
