@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProductService.BusinessLogic.Services;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using AutoMapper;
 using ProductService.Rest.Models.Resources;
 using ProductService.BusinessLogic.Dtos;
@@ -28,10 +29,19 @@ namespace ProductService.Rest.Controllers
         #endregion
 
         #region Public Method Definition
-        [HttpGet("{productID}")]
-        public async Task<IActionResult> GetProductAsync(long productID)
+        [HttpGet]
+        public async Task<IActionResult> GetProductsAsync()
         {
-            ProductDto productDto = await _productService.GetProductAsync(productID);
+            IList<ProductDto> productDtos = await _productService.GetProductsAsync(1, 10);
+
+            return Ok(new DataResponse<IList<ProductResource>>(
+                _mapper.Map<IList<ProductDto>, IList<ProductResource>>(productDtos)));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProductAsync(long id)
+        {
+            ProductDto productDto = await _productService.GetProductAsync(id);
             
             if (productDto == null)
                 return NotFound();
@@ -48,14 +58,36 @@ namespace ProductService.Rest.Controllers
             ProductDto productDto = await _productService
                 .CreateProductAsync(_mapper.Map<ProductResource, ProductDto>(productResource));
 
-            // TODO: Change this to CreatedAt method
-            return Ok(_mapper.Map<ProductDto, ProductResource>(productDto));
+            return CreatedAtAction(nameof(PostAsync), new {productID = productDto.ProductID}, 
+                new DataResponse<ProductResource>(_mapper.Map<ProductDto, ProductResource>(productDto)));
         }
 
-        [HttpPut("{}")]
-        public async Task<IActionResult> PutAsync([FromBody] ProductResource productResource)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutAsync(long id, [FromBody] ProductResource productResource)
         {
-            throw new System.NotImplementedException();
+            if (!ModelState.IsValid)
+                return BadRequest(new ErrorResponse(ModelState.GetErrorMessages()));
+            
+            ProductDto productDto = await _productService
+                .UpdateProductAsync(id, _mapper.Map<ProductResource, ProductDto>(productResource));
+
+            if (productDto == null)
+                return NotFound();
+            
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(long id)
+        {
+            ProductDto productDto = await _productService.GetProductAsync(id);
+
+            if (productDto == null)
+                return NotFound();
+
+            await _productService.DeleteProductAsync(productDto);
+
+            return NoContent();
         }
         #endregion
     }
