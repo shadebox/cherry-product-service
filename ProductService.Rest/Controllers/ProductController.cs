@@ -1,6 +1,6 @@
 #region Include Definition
 using Microsoft.AspNetCore.Mvc;
-using ProductService.BusinessLogic.Services;
+using ProductService.BusinessLogic.IServices;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using AutoMapper;
@@ -30,7 +30,7 @@ namespace ProductService.Rest.Controllers
 
         #region Public Method Definition
         [HttpGet]
-        public async Task<IActionResult> GetProductsAsync()
+        public async Task<IActionResult> GetAsync()
         {
             IList<ProductDto> productDtos = await _productService.GetProductsAsync(1, 10);
 
@@ -39,7 +39,8 @@ namespace ProductService.Rest.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProductAsync(long id)
+        //[ActionName("GetAsync")]
+        public async Task<IActionResult> GetAsync(long id)
         {
             ProductDto productDto = await _productService.GetProductAsync(id);
             
@@ -58,7 +59,7 @@ namespace ProductService.Rest.Controllers
             ProductDto productDto = await _productService
                 .CreateProductAsync(_mapper.Map<ProductResource, ProductDto>(productResource));
 
-            return CreatedAtAction(nameof(PostAsync), new {productID = productDto.ProductID}, 
+            return CreatedAtAction(nameof(GetAsync), new { id = productDto.ProductID }, 
                 new DataResponse<ProductResource>(_mapper.Map<ProductDto, ProductResource>(productDto)));
         }
 
@@ -80,12 +81,10 @@ namespace ProductService.Rest.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(long id)
         {
-            ProductDto productDto = await _productService.GetProductAsync(id);
+            ProductDto productDto = await _productService.DeleteProductAsync(id);
 
             if (productDto == null)
-                return NotFound();
-
-            await _productService.DeleteProductAsync(productDto);
+                return NotFound();            
 
             return NoContent();
         }

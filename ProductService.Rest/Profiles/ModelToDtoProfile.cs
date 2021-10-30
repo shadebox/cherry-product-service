@@ -19,8 +19,8 @@ namespace ProductService.Rest.Profiles
             CreateMap<Product, ProductDto>()
                 .ForMember(d => d.ProductID, s => s.MapFrom(x => x.ID));
 
-            CreateMap<ProductDto, Product>()
-                .ForMember(d => d.ID, s => s.MapFrom(x => x.ProductID));
+            // CreateMap<ProductDto, Product>()
+            //     .ForMember(d => d.ID, s => s.MapFrom(x => x.ProductID));
         }
     }
     #endregion

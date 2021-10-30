@@ -6,8 +6,9 @@ using ProductService.Repository.IRepository;
 using ProductService.Repository.IService;
 using ProductService.BusinessLogic.WhereExpression;
 using ProductService.BusinessLogic.Dtos;
-using System;
+using ProductService.BusinessLogic.IServices;
 using AutoMapper;
+using System;
 #endregion
 
 namespace ProductService.BusinessLogic.Services
@@ -35,15 +36,31 @@ namespace ProductService.BusinessLogic.Services
         #region Public Method Definition
         public async Task<IList<ProductDto>> GetProductsAsync(int page, int pageSize)
         {
-            IList<Product> products = await _productRepository.GetManyAsync(null, page, pageSize);
-            return _mapper.Map<IList<Product>, IList<ProductDto>>(products);
+            try
+            {
+                IList<Product> products = await _productRepository.GetManyAsync(null, page, pageSize);
+
+                return _mapper.Map<IList<Product>, IList<ProductDto>>(products);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<ProductDto> GetProductAsync(long id)
         {
-            Product product = await _productRepository
-                .GetSingleAsync(_productExpression.GetProduct(new Product { ID = id }));
-            return _mapper.Map<Product, ProductDto>(product);
+            try
+            {
+                Product product = await _productRepository
+                    .GetSingleAsync(_productExpression.GetProduct(new Product { ID = id }));                    
+            
+                return _mapper.Map<Product, ProductDto>(product);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         
         public async Task<ProductDto> CreateProductAsync(ProductDto productDto)
@@ -55,7 +72,7 @@ namespace ProductService.BusinessLogic.Services
 
                 return _mapper.Map<Product, ProductDto>(newProduct);
             }
-            catch
+            catch (Exception)
             {
                 throw;
             }
@@ -63,37 +80,44 @@ namespace ProductService.BusinessLogic.Services
 
         public async Task<ProductDto> UpdateProductAsync(long id, ProductDto productDto)
         {
-            Product product = await _productRepository
-                .GetSingleAsync(_productExpression.GetProduct(new Product { ID = id }));
-
-            if (product == null)
-                return null;
-
             try
             {
-                _mapper.Map<ProductDto, Product>(productDto, product);
-                product.ID = id;
+                Product updateProduct = await _productRepository
+                    .GetSingleAsync(_productExpression.GetProduct(new Product { ID = id }));              
 
-                _productRepository.Save(product);
-                int value = await _baseService.SaveChangesAsync();
+                if (updateProduct != null)
+                {
+                    _mapper.Map<ProductDto, Product>(productDto, updateProduct);
 
-                return _mapper.Map<Product, ProductDto>(product);
+                    updateProduct.ID = id;
+                    _productRepository.Save(updateProduct);
+                    int value = await _baseService.SaveChangesAsync();
+                }
+
+                return _mapper.Map<Product, ProductDto>(updateProduct);
             }
-            catch
+            catch (Exception)
             {
                 throw;
             }
         }
 
-        public async Task DeleteProductAsync(ProductDto productDto)
+        public async Task<ProductDto> DeleteProductAsync(long id)
         {
             try
             {
-                Product deleteProduct = _mapper.Map<ProductDto, Product>(productDto);
-                _productRepository.Delete(deleteProduct);
-                int value = await _baseService.SaveChangesAsync();
+                Product deleteProduct = await _productRepository
+                    .GetSingleAsync(_productExpression.GetProduct(new Product { ID = id })); 
+
+                if (deleteProduct != null)
+                {
+                    _productRepository.Delete(deleteProduct);
+                    int value = await _baseService.SaveChangesAsync();
+                }
+                
+                return _mapper.Map<Product, ProductDto>(deleteProduct);
             }
-            catch
+            catch (Exception)
             {
                 throw;
             }

@@ -5,7 +5,7 @@ using ProductService.Database.Domain;
 using ProductService.BusinessLogic.Dtos;
 #endregion
 
-namespace ProductService.BusinessLogic.Services
+namespace ProductService.BusinessLogic.IServices
 {
     #region Public Interface Definition
     public interface IProductService
@@ -19,7 +19,7 @@ namespace ProductService.BusinessLogic.Services
 
         Task<ProductDto> UpdateProductAsync(long id, ProductDto productDto);
 
-        Task DeleteProductAsync(ProductDto productDto);
+        Task<ProductDto> DeleteProductAsync(long id);
         #endregion
     }
     #endregion

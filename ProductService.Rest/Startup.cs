@@ -9,7 +9,7 @@ using ProductService.Repository.IRepository;
 using ProductService.Repository.EFRepository;
 using ProductService.Repository.IService;
 using ProductService.Repository.EFService;
-using ProductService.BusinessLogic.Services;
+using ProductService.BusinessLogic.IServices;
 using ProductService.BusinessLogic.WhereExpression;
 using ProductService.Database.DBContext;
 using Microsoft.EntityFrameworkCore;
@@ -65,9 +65,8 @@ namespace ProductService.Rest
             
             services.AddScoped<ProductExpression>();
 
-            // services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddAutoMapper(typeof(Startup));
-            services.AddControllers();
+            services.AddAutoMapper(typeof(Startup).Assembly);
+            services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
