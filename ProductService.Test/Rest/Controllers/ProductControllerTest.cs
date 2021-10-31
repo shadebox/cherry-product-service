@@ -60,45 +60,56 @@ namespace ProducrService.Test.Rest.Controllers
             Assert.Equal(productDtos.Count(), products.Data.Count());
         }
 
-        // [Fact]
-        // public void GetAsyncReturnsEmptyList()
-        // {
-        //     // Arrange
+        [Fact]
+        public async Task GetAsyncReturnsProduct()
+        {            
+            // Arrange
+            IList<ProductDto> productDtos = new List<ProductDto>
+            {
+                new ProductDto { ProductID = 1, Name = "Blue Queen Bed", Status = 1 }
+            };
 
-        //     // Act
+            Mock<IProductService> mockProductService = GetProductServiceMock(productDtos);
+            ProductController productController = new ProductController(mockProductService.Object, _mapper);
 
-        //     // Assert
-        // }
+            // Act
+            OkObjectResult result = await productController.GetAsync(1) as OkObjectResult;
+            DataResponse<ProductResource> product = result.Value as DataResponse<ProductResource>;
 
-        // [Fact]
-        // public void GetAsyncReturnsProduct()
-        // {            
-        //     // Arrange
+            // Assert
+            Assert.Equal(200, result.StatusCode);
+            Assert.Equal(productDtos.First().ProductID, product.Data.ProductID);
+        }
 
-        //     // Act
+        [Fact]
+        public async Task GetAsyncReturnsProductNotFound()
+        {
+            // Arrange
+            IList<ProductDto> productDtos = new List<ProductDto>
+            {
+                new ProductDto { ProductID = 1, Name = "Blue Queen Bed", Status = 1 }
+            };
 
-        //     // Assert
-        // }
+            Mock<IProductService> mockProductService = GetProductServiceMock(productDtos);
+            ProductController productController = new ProductController(mockProductService.Object, _mapper);
 
-        // [Fact]
-        // public void GetAsyncReturnsProductNotFound()
-        // {
-        //     // Arrange
+            // Act
+            NotFoundResult result = await productController.GetAsync(10) as NotFoundResult;
 
-        //     // Act
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+            Assert.Equal(404, result.StatusCode);
+        }
 
-        //     // Assert
-        // }
+        [Fact]
+        public void PostAsyncReturnsBadRequest()
+        {
+            // Arrange
 
-        // [Fact]
-        // public void PostAsyncReturnsBadRequest()
-        // {
-        //     // Arrange
+            // Act
 
-        //     // Act
-
-        //     // Assert
-        // }
+            // Assert
+        }
 
         // [Fact]
         // public void PostAsyncReturnsSuccess()
@@ -138,6 +149,9 @@ namespace ProducrService.Test.Rest.Controllers
 
             productServiceMock.Setup(x => x.GetProductsAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(new Func<int, int, IList<ProductDto>>((y, z) => products.ToList()));
+
+            productServiceMock.Setup(x => x.GetProductAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Func<long, ProductDto>((y) => products.Where(z => z.ProductID == y).SingleOrDefault()));
 
             return productServiceMock;
         }
